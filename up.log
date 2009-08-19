@@ -2,3 +2,6 @@
 ? .gitignore
 ? status.log
 ? up.log
+P usr.sbin/kadmin/Makefile
+P usr.sbin/kstash/Makefile
+P usr.sbin/ktutil/Makefile

@@ -4,5 +4,9 @@
 #   (use "git checkout -- <file>..." to discard changes in working directory)
 #
 #	modified:   status.log
+#	modified:   up.log
+#	modified:   usr.sbin/kadmin/Makefile
+#	modified:   usr.sbin/kstash/Makefile
+#	modified:   usr.sbin/ktutil/Makefile
 #
 no changes added to commit (use "git add" and/or "git commit -a")
