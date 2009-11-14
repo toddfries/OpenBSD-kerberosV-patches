@@ -2,4 +2,3 @@
 ? .gitignore
 ? status.log
 ? up.log
-P src/lib/roken/mini_inetd.c
