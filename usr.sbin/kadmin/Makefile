@@ -1,12 +1,12 @@
-# $OpenBSD: Makefile,v 1.19 2012/12/19 09:54:05 espie Exp $
-
-KRBDEPTH=../..
-.include <${.CURDIR}/../../Makefile.inc>
+# $OpenBSD: Makefile,v 1.28 2013/07/10 11:14:40 ajacoutot Exp $
 
 PROG=	kadmin
-MAN=	kadmin.8
+MPAGES=	kadmin.8
+MSRC=	${KRB5DIR}/kadmin
 
-SRCS=	ank.c \
+SRCS=	add_enctype.c \
+	ank.c \
+	check.c \
 	cpw.c \
 	del.c \
 	del_enctype.c \
@@ -16,39 +16,32 @@ SRCS=	ank.c \
 	init.c \
 	kadmin.c \
 	kadmin-commands.c \
-	kadmin-commands.h \
-	kadmin_locl.h \
 	load.c \
 	mod.c \
 	pw_quality.c \
 	random_password.c \
 	rename.c \
-	sl.c \
 	stash.c \
 	util.c
-SRCS+=	${PRINTVER}
-SRCS+=	tm2time.c
 
-.PATH:	${KRB5SRC}/kadmin
-.PATH:	${KRB5SRC}/lib/sl
-.PATH:	${ROKENSRC}
+CPPFLAGS=-I${KRB5DIR}/lib/asn1 -I${KRB5DIR}/lib/krb5 -I${KRB5DIR}/lib/roken \
+	-I${KRB5DIR}/lib/sl -I.
+DPADD=	${LIBKADM5CLNT} ${LIBKADM5SRV} ${LIBHDB} ${LIBKRB5} \
+	${LIBSL} ${LIBROKEN} ${LIBVERS} ${LIBASN1} \
+	${LIBCRYPTO} ${LIBCOM_ERR} \
+	${LIBEDIT} ${LIBNCURSES}
+LDADD=	-lkadm5clnt -lkadm5srv -lhdb -lkrb5 \
+	${LIBSL} -lroken ${LIBVERS} -lasn1 \
+	-lcrypto -lcom_err \
+	-ledit -lncurses -lwind -lheimbase
 
-slc:	slc-gram.o slc-lex.o ${PRINTVER}
-	$(CC) -o slc $> -lkrb5 -lcrypto
-
-SLC=	slc
-
-depend: kadmin-commands.h
-kadmin-commands.c kadmin-commands.h:	kadmin-commands.in $(SLC)
-	./$(SLC) $(KRB5SRC)/kadmin/kadmin-commands.in
-CFLAGS+=-I${KRB5SRC}/lib/krb5 -I${KRB5SRC}/lib/kadm5 -I.
-
-DPADD+= ${LIBEDIT} ${LIBCURSES} ${LIBKADM5SRV} ${LIBKADM5CLNT} \
-	${LIBKRB5} ${LIBCRYPTO}
-LDADD+=	-ledit -lcurses -lkadm5srv -lkadm5clnt \
-	-lkrb5 -lcrypto
-
-CLEANFILES+=	kadmin-commands.c slc lc-lex.o kadmin-commands.h \
-		slc-lex.o slc-gram.o
+CLEANFILES+=	kadmin-commands.[ch]*
 
 .include <bsd.prog.mk>
+
+kadmin-commands.h kadmin-commands.c: ${KRB5DIR}/kadmin/kadmin-commands.in
+	${SLC} ${.ALLSRC:M*.in}
+
+kadmin-commands.o: kadmin-commands.h
+
+.PATH: ${KRB5DIR}/kadmin

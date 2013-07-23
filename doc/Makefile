@@ -1,38 +1,36 @@
-# $Id: Makefile,v 1.7 2010/08/18 20:21:53 david Exp $
+# $OpenBSD: Makefile,v 1.13 2013/07/09 14:33:43 ajacoutot Exp $
 
-KRBDEPTH=..
-.include "../Makefile.inc"
+KINFOSRC =	${.CURDIR}/../src/doc
+KINFODIR =	${DESTDIR}${SHAREDIR}/info
 
-.PATH:	${KRB5SRC}/doc
+MAKEINFO =	/usr/bin/makeinfo
+INSTALL-INFO =	/usr/bin/install-info
 
-MAKEINFO = /usr/bin/makeinfo
-INSTALL-INFO = /usr/bin/install-info
+INFO =	heimdal.info
 
-infodir = ${DESTDIR}/usr/share/info
+SRCS =	heimdal.texi intro.texi whatis.texi install.texi setup.texi apps.texi \
+	misc.texi kerberos4.texi win2k.texi programming.texi migration.texi \
+	ack.texi copyright.texi vars.texi
 
-INSTALL = /usr/bin/install
+all: ${INFO}
 
-info = heimdal.info
+heimdal.info: ${SRCS}
+.for t in ${SRCS}
+	sed -f ${.CURDIR}/../varsub ${KINFOSRC}/${t} > ${.OBJDIR}/${t}.tmp && \
+		mv ${.OBJDIR}/${t}.tmp ${.OBJDIR}/${t}
+.endfor
+	${MAKEINFO} --no-split -I${KINFOSRC} -o ${.TARGET} ${.OBJDIR}/heimdal.texi
 
-SRCS = 	heimdal.texi intro.texi install.texi setup.texi kerberos4.texi
-
-
-all: $(info)
-
-install: $(info)
-	$(INSTALL-INFO) ${.OBJDIR}/$(info) $(infodir)/dir
-	${INSTALL} ${INSTALL_COPY} -m 444 -o ${BINOWN} -g ${BINGRP} ${.OBJDIR}/$(info) $(infodir)
-
-$(info): $(SRCS)
-	${MAKEINFO} --no-split -I${KRB5SRC}/doc -o ${.OBJDIR}/$@ ${KRB5SRC}/doc/heimdal.texi
+install: ${INFO}
+	${INSTALL} ${INSTALL_COPY} -m ${DOCMODE} -o ${DOCOWN} -g ${DOCGRP} ${.OBJDIR}/${INFO} ${KINFODIR}
+	$(INSTALL-INFO) ${.OBJDIR}/${INFO} ${KINFODIR}/dir
 
 clean:
-	(cd ${.OBJDIR} ; rm -f *.aux *.cp *.cps *.dvi *.fn *.ky *.log *.pg *.toc *.tp *.vr *.info *.info-[0-9])
+	rm -f ${INFO} ${SRCS}
 
 cleandir: clean
 
-
-.PHONY: install all clean cleandir
+.PATH:	${KINFOSRC}
 
 .include <bsd.obj.mk>
 .include <bsd.subdir.mk>

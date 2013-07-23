@@ -1,21 +1,15 @@
-# $OpenBSD: Makefile,v 1.8 2010/10/13 08:14:22 jsg Exp $
-
-KRBDEPTH=../..
-.include <${.CURDIR}/../../Makefile.inc>
+# $OpenBSD: Makefile,v 1.14 2013/07/10 11:14:39 ajacoutot Exp $
 
 PROG=	hpropd
-MAN=	${PROG}.8
-
-SRCS=	hpropd.c
-SRCS+=	${PRINTVER}
-SRCS+=	mini_inetd.c socket.c tm2time.c 
-
-.PATH:	${KRB5SRC}/kdc
-.PATH:	${ROKENSRC}
-
-CFLAGS+=-I${KRB5SRC}/lib/krb5 -I${KRB5SRC}/lib/kadm5
-
-DPADD+= ${LIBKADM5SRV} ${LIBKRB5} ${LIBCRYPTO}
-LDADD+=	-lkadm5srv -lkrb5 -lcrypto
+MPAGES=	hpropd.8
+MSRC=	${KRB5DIR}/kdc
+CPPFLAGS=	-I${KRB5DIR}/lib/roken -I${KRB5DIR}/lib/krb5 -I${KRB5DIR}/lib/asn1 \
+		-I${KRB5DIR}/kdc
+DPADD=	${LIBHDB} ${LIBKRB5} ${LIBROKEN} ${LIBVERS} \
+	${LIBASN1} ${LIBCRYPTO} ${LIBCOM_ERR}
+LDADD=	-lhdb -lkrb5 -lroken ${LIBVERS} \
+	-lasn1 -lcrypto -lcom_err -lheimbase -lwind
 
 .include <bsd.prog.mk>
+
+.PATH: ${KRB5DIR}/kdc

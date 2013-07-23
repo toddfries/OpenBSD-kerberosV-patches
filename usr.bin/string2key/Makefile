@@ -1,21 +1,18 @@
-# $OpenBSD: Makefile,v 1.5 2010/10/13 08:14:22 jsg Exp $
-
-KRBDEPTH=../..
-.include <${.CURDIR}/../../Makefile.inc>
+# $OpenBSD: Makefile,v 1.10 2013/07/10 10:43:32 ajacoutot Exp $
 
 PROG=	string2key
-MAN=	${PROG}.8
-
-SRCS=	string2key.c
-SRCS+=	${PRINTVER}
-SRCS+=	estrdup.c
-
-.PATH:	${KRB5SRC}/kdc
-.PATH:	${ROKENSRC}
-
-CFLAGS+=-I${KRB5SRC}/kdc -I${KRB5SRC}/lib/krb5
-
-DPADD+=	${LIBKRB5} ${LIBCRYPTO}
-LDADD+=	-lkrb5 -lcrypto
+MPAGES=	string2key.8
+MSRC=	${KRB5DIR}/kdc
+CPPFLAGS=	-I${KRB5DIR}/kdc \
+		-I${KRB5DIR}/lib/asn1 \
+		-I${KRB5DIR}/lib/krb5 \
+		-I${KRB5DIR}/lib/roken \
+		-I${KRB5DIR}/lib/windc
+DPADD=	${LIBHDB} ${LIBKRB5} ${LIBROKEN} ${LIBASN1} ${LIBCRYPTO} \
+	${LIBVERS}
+LDADD=	-lhdb -lkrb5 -lroken -lasn1 -lcrypto ${LIBVERS} -lwind \
+	-lheimbase -lcom_err
 
 .include <bsd.prog.mk>
+
+.PATH: ${KRB5DIR}/kdc
