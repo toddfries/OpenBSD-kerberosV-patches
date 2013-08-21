@@ -1,4 +1,4 @@
-# $OpenBSD: Makefile,v 1.8 2013/07/10 11:14:40 ajacoutot Exp $
+# $OpenBSD: Makefile,v 1.10 2013/08/10 14:54:03 ajacoutot Exp $
 
 PROG=	kcc
 MPAGES=	klist.1
@@ -8,8 +8,8 @@ CPPFLAGS=	-I${KRB5DIR}/lib/asn1 \
 		-I${KRB5DIR}/lib/roken \
 		-I${KRB5DIR}/lib/sl -I.
 DPADD=	${LIBKRB5} ${LIBROKEN} ${LIBASN1} ${LIBCRYPTO} \
-	${LIBKAFS5} ${LIBSL} ${LIBVERS} ${LIBEDIT}
-LDADD=	-lkrb5 -lroken -lasn1 -lcrypto -lkafs5 ${LIBSL} \
+	${LIBKAFS} ${LIBSL} ${LIBVERS} ${LIBEDIT}
+LDADD=	-lkrb5 -lroken -lasn1 -lcrypto -lkafs ${LIBSL} \
 	${LIBVERS} -ledit -lcurses -lwind -lcom_err -lheimbase
 SRCS=	kcc.c \
 	kcc-commands.c \
